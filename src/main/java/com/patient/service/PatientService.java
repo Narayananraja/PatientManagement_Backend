@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -51,6 +52,10 @@ public class PatientService {
 
     public boolean isEmailInUse(String email) {
         return patientRepository.findByEmail(email).isPresent(); // Check if email exists
+    }
+
+    public List<Patient> getAllPatients() {
+        return patientRepository.findAll();
     }
 
 
