@@ -67,14 +67,31 @@ public class PatientController {
     }
 
     @PostMapping("/admin")
-    public ResponseEntity<?> adminLogin(@RequestBody AdminLoginRequest loginRequest) {
+    public ResponseEntity<String> adminLogin(@RequestBody AdminLoginRequest loginRequest) {
         // Validate admin credentials
-        if (loginRequest.getEmail().equals(adminEmail) && loginRequest.getPassword().equals(adminPassword)) {
-            // Fetch all patients from the database
-            List<Patient> patients = patientService.getAllPatients();
-            return ResponseEntity.ok(patients);
+        if (patientService.validateAdminCredentials(loginRequest.getEmail(), loginRequest.getPassword())) {
+            return ResponseEntity.ok("Login successful"); // Return success message
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized");
         }
     }
+
+    @GetMapping("/patients-list")
+    public ResponseEntity<List<Patient>> getAllPatients() {
+        // Fetch all patients from the database
+        List<Patient> patients = patientService.getAllPatients();
+        return ResponseEntity.ok(patients);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePatient(@PathVariable Long id) {
+        boolean isDeleted = patientService.deletePatientById(id); // Service method to delete patient
+
+        if (isDeleted) {
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // 404 Not Found if patient not found
+        }
+    }
+
 }

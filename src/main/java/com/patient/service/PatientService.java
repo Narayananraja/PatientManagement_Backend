@@ -3,6 +3,7 @@ package com.patient.service;
 import com.patient.entity.Patient;
 import com.patient.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,12 @@ public class PatientService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Value("${admin.email}")
+    private String adminEmail;
+
+    @Value("${admin.password}")
+    private String adminPassword;
 
     public Patient registerPatient(Patient patient) throws Exception {
         if (getPatientByEmail(patient.getEmail()).isPresent()) {
@@ -56,6 +63,19 @@ public class PatientService {
 
     public List<Patient> getAllPatients() {
         return patientRepository.findAll();
+    }
+
+    public boolean validateAdminCredentials(String email, String password) {
+        // Check if the provided credentials match the expected admin credentials
+        return adminEmail.equals(email) && adminPassword.equals(password);
+    }
+
+    public boolean deletePatientById(Long id) {
+        if (patientRepository.existsById(id)) {
+            patientRepository.deleteById(id);
+            return true; // Indicate successful deletion
+        }
+        return false; // Indicate patient not found
     }
 
 
