@@ -1,6 +1,8 @@
 package com.patient.service;
 
+import com.patient.entity.Doctor;
 import com.patient.entity.Patient;
+import com.patient.repository.DoctorRepository;
 import com.patient.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +16,8 @@ import java.util.Optional;
 public class PatientService {
     @Autowired
     private PatientRepository patientRepository;
+    @Autowired
+    private DoctorRepository doctorRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -76,6 +80,24 @@ public class PatientService {
             return true; // Indicate successful deletion
         }
         return false; // Indicate patient not found
+    }
+    public Doctor dregister(Doctor doctor){
+        return doctorRepository.save(doctor);
+    }
+    public List<Doctor> getAllDoctors() {
+        return doctorRepository.findAll();
+    }
+    public boolean deleteDoctorById(Long id) {
+        if (doctorRepository.existsById(id)) {
+            doctorRepository.deleteById(id);
+            return true; // Indicate successful deletion
+        }
+        return false; // Indicate patient not found
+    }
+    public Doctor editedDoctor(Long id, Doctor editedDoctor) {
+        editedDoctor.setId(id);  // Ensure the ID is set for update
+        return doctorRepository.save(editedDoctor);
+
     }
 
 

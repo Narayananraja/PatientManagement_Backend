@@ -1,6 +1,7 @@
 package com.patient.controller;
 
 import com.patient.entity.AdminLoginRequest;
+import com.patient.entity.Doctor;
 import com.patient.entity.Patient;
 import com.patient.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,6 @@ public class PatientController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-
     @PutMapping("/{id}")
     public ResponseEntity<Patient> updatePatient(@PathVariable Long id, @RequestBody Patient patient) {
         return ResponseEntity.ok(patientService.updatePatient(id, patient));
@@ -93,5 +93,38 @@ public class PatientController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // 404 Not Found if patient not found
         }
     }
+    @PostMapping("/dregister")
+    public ResponseEntity<Doctor> dregister(@RequestBody Doctor doctor){
+        try{
+       Doctor dregister= patientService.dregister(doctor);
+       return new ResponseEntity<>(dregister,HttpStatus.CREATED);
+
+        }
+        catch(Exception e){
+            return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @GetMapping("/doctors-list")
+    public ResponseEntity<List<Doctor>> getAllDoctors() {
+        // Fetch all patients from the database
+        List<Doctor> doctor = patientService.getAllDoctors();
+        return ResponseEntity.ok(doctor);
+    }
+    @DeleteMapping("/doctor/{doctorId}")
+    public ResponseEntity<Void> deleteDoctor(@PathVariable Long id) {
+
+        boolean isDeleted = patientService.deleteDoctorById(id); // Service method to delete patient
+
+        if (isDeleted) {
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // 404 Not Found if patient not found
+        }
+    }
+    @PutMapping("doctors/{doctord}")
+    public ResponseEntity<Doctor> updateDoctor(@PathVariable Long id, @RequestBody Doctor doctor) {
+        return ResponseEntity.ok(patientService.editedDoctor(id, doctor));
+    }
+
 
 }
